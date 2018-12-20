@@ -1,29 +1,35 @@
 <template>
   <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
+    <router-view></router-view>
   </div>
 </template>
+<script>
+import { mapActions, mapGetters } from "vuex";
+import IrisClient from "./websocket/irisClient.js";
+export default {
+  data() {
+    return {};
+  },
+  computed: {
+    ...mapGetters(["receiveMsg"])
+  },
+  watch: {
+    receiveMsg(val) {
+      this.setLatelyMsgsAction({other:true,msg:val});  //other区分别人还是自己发的
+    }
+  },
+  created() {
+    var client = new IrisClient(this.setReceiveMsgAction);
+    this.setSocketClientAction(client);
+  },
+  methods: {
+    ...mapActions(["setSocketClientAction", "setReceiveMsgAction","setLatelyMsgsAction"])
+  }
+};
+</script>
 
 <style lang="less">
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+  height: 100%;
 }
 </style>
