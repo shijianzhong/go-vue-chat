@@ -3,15 +3,32 @@
     <div class="chat-box-header">
       groupInfo
     </div>
-    <div class="chat-box-body" ref="chatboxBody">
-      <div class="chat-box-body-row" v-for="(i,index) in latelyMsgs" :key="index">
-          <div v-if="i.other" style="padding:2px;background-color: antiquewhite;display: inline">{{i.msg}}</div>
-          <div v-else         style="padding:2px;float:right;background-color: #9EEA6A;display: inline">{{i.msg}}</div>
+    <div
+      class="chat-box-body"
+      ref="chatboxBody"
+    >
+      <div
+        class="chat-box-body-row"
+        v-for="(i,index) in latelyMsgs"
+        :key="index"
+      >
+        <div
+          v-if="i.other"
+          style="padding:2px;background-color: antiquewhite;display: inline"
+        >{{i.msg}}</div>
+        <div
+          v-else
+          style="padding:2px;float:right;background-color: #9EEA6A;display: inline"
+        >{{i.msg}}</div>
       </div>
     </div>
     <div class="chat-box-footer">
       <group>
-        <x-input class="weui-vcode" v-model="msg" placeholder="输入消息">
+        <x-input
+          class="weui-vcode"
+          v-model="msg"
+          placeholder="输入消息"
+        >
           <x-button
             slot="right"
             type="primary"
@@ -34,21 +51,28 @@ export default {
   },
   data() {
     return {
-        msg:"",
+      msg: ""
     };
   },
   computed: {
-    ...mapGetters(["socketClient", "latelyMsgs"])
+    ...mapGetters(["socketClient", "latelyMsgs", "receiveMsg"])
+  },
+  watch: {
+    receiveMsg(val) {
+      this.$nextTick(() => {
+        document.scrollingElement.scrollTop = this.$refs.chatboxBody.scrollHeight;
+      });
+    }
   },
   methods: {
-    ...mapActions(['setLatelyMsgsAction']),
+    ...mapActions(["setLatelyMsgsAction"]),
     sendMsg() {
       this.socketClient.SendMsg(this.msg);
-      this.setLatelyMsgsAction({other:false,msg:this.msg});
-      this.$nextTick(()=>{
-          this.$refs.chatboxBody.scrollTop = this.$refs.chatboxBody.scrollHeight;
-      })
-      this.msg="";
+      this.setLatelyMsgsAction({ other: false, msg: this.msg });
+      this.$nextTick(() => {
+        document.scrollingElement.scrollTop = this.$refs.chatboxBody.scrollHeight;
+      });
+      this.msg = "";
     }
   }
 };
@@ -69,9 +93,8 @@ export default {
   .chat-box-body {
     margin-top: 2rem;
     margin-bottom: 120px;
-    .chat-box-body-row{
-        padding: 1rem;
-        
+    .chat-box-body-row {
+      padding: 1rem;
     }
   }
   .chat-box-footer {
